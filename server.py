@@ -33,3 +33,9 @@ def late_entry():
     db.session.commit()
 
     return jsonify({'message':'Late Entry recorded successfully'}), 201
+
+
+@app.route('/late_count/<roll_number>', methods=['GET'])
+def late_count(roll_number):  #We'll fetch roll number from the URL
+    count = LateEntry.query.filter(LateEntry.roll_number==roll_number).count()
+    return jsonify({'roll_number':roll_number, 'late_count':count})
