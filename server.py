@@ -66,4 +66,67 @@ def late_entries_last_night():
     return jsonify({'late_entries_last_night':late_students})
 
 
+# We made 4 fields Roll number, Start Date, End Date, Late Count. There are 4 different variations of user searches
+@app.route('/find late students', methods=['GET'])
+def find_late_students():
+    start_date = request.args.get("Start_date")
+    end_date = request.args.ger("End_date")
+    roll_number = request.args.get("Roll_number")
+    late_count_threshold = int(request.args.get("Late_count", 0))
+
+    date_format = "%d-%m-%Y"
+    if not start_date:
+        return jsonify({'error':"Please enter a start date"}), 400
+    
+    start_date = datetime.strptime(start_date, date_format)
+    
+    # Roll Number given
+    if roll_number:
+        # Both start and end dates are given
+        if end_date:
+            end_date = datetime.strptime(end_date, date_format).date()
+            late_count = LateEntry.query.filter(LateEntry.roll_number == roll_number, LateEntry.entry_time.date().between(start_date, end_date)).count()
+            return jsonify({"roll_number": roll_number, "late_count":late_count})
+        
+        # Only start date is given
+        else:
+            late_count = LateEntry.query.filter(LateEntry.roll_number == roll_number, LateEntry.entry_time.date() == start_date).count()
+            was_late = late_count>0
+
+            return jsonify({"roll_number":roll_number, "was_late":was_late})
+        
+    # Roll Number is not given
+    else:
+        # Both start and end dates are given
+        if end_date:
+            end_date = datetime.strptime(end_date, date_format)
+
+            late_entries = LateEntry.query.filter(LateEntry.entry_time.date().between(start_date, end_date)).all()
+            late_count = {}
+            for entry in late_entries:
+                if entry.roll_number not in late_count:
+                    late_count[entry.roll_number] = 1
+                else:
+                    late_count[entry.roll_number]+=1
+
+            result = [roll_number for roll_number, count in late_count.items() if count > late_count_threshold]
+            return jsonify({"Late_students_list": result})
+
+        # Only start date is given
+        # Here Student is the record of all the Students
+        else:
+            late_entries = LateEntry.query.filter(LateEntry.entry_time.date() == start_date).all()
+
+            all_students = Student.query.all()
+            all_students_roll_number = [student.roll_number for student in all_students]
+
+            result=[]
+
+            was_late = any(entry.roll_number == roll_number for entry in late_entries)
+
+            result.append({'roll_number':roll_number, 'was_late':was_late})
+
+            return jsonify({"Late_status_of_all_students": result})
+
+
 
