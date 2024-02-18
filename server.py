@@ -127,6 +127,46 @@ def find_late_students():
             result.append({'roll_number':roll_number, 'was_late':was_late})
 
             return jsonify({"Late_status_of_all_students": result})
+        
 
+#Here we are extraxting information on the basis of Batches
+@app.route('/late_entries_for_batch', methos=['GET'])
+def late_entries_for_batch():
+    batch_year = request.args.get('batch_year')
+    start_date = request.args.get('start_date')
+    end_date = request.args.get('end_date')
+    late_count_threshold = int(request.args.get('late_count', 0))
 
+    if not batch_year or start_date:
+        return jsonify({"error":"Please enter the Required details"}), 400
+    
+    # Here we are converting the string batch year into the integer, but if there are non numeric characters then it would raise a ValueError.
+    try:
+        batch_year = int(batch_year)
+    except ValueError:
+        return jsonify({'error':'Invalid Batch Year'}), 400
 
+    date_format = "%d-%m-%Y"
+
+    start_date = datetime.strptime(start_date, date_format).date()
+    end_date = datetime.strptime(end_date, date_format).date()
+
+    batch_database_name = f'batch_{batch_year}'
+
+    late_entries = LateEntry.query.using_bind(batch_database_name).filter(LateEntry.entry_time.date().between(start_date, end_date)).all()
+
+    late_count={}
+    for entry in late_entries:
+        if entry.roll_number not in late_count:
+            late_count[entry.roll_number] = 1
+        else:
+            late_count[entry.roll_number]+=1
+
+    result={}
+    for roll_number, count in late_count.items():
+        if count>late_count_threshold:
+            result[roll_number]=count
+
+    late_roll_numbers = [roll_number for roll_number, count in late_count.items() if count>late_count_threshold]
+
+    return jsonify({"Result": result ,"Late_roll_numbers": late_roll_numbers})
