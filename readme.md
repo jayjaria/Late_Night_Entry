@@ -3,7 +3,7 @@
 ## THINGS TO DO:
 
 ### By Jay
-- [ ] Install Postman [Download Link](https://www.postman.com/downloads/)
+- [x] Install Postman [Download Link](https://www.postman.com/downloads/)
 - [ ] Learn the flask basics [Learn Here](https://flask.palletsprojects.com/en/3.0.x/quickstart/#)
 - [ ] Learn about REST API and different HTTP methods. [Basic Intro Learn Here](https://testsigma.com/blog/different-types-of-apis-and-protocols-2022-updated/#2_REST_Representational_State_Transfer)
 - [ ] Create a request with HTTP get method in flask and sent the response hello in the json format, [use quickstart and learn how to send data in json fomrat]
