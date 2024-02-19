@@ -4,9 +4,21 @@ from datetime import datetime, timedelta
 app = Flask(__name__)
 
 
-@app.get("/")
+@app.get("/hello")
 def hello_world():
-    return "<p>Hello, World!</p>"
+    # /hello?para1=2
+    para1=request.args.get("para1")
+    if(para1):
+        print({"para1":para1})
+    return "<ul><li>JAI</li><li>JITEND</li><li>ABC</li></ul>"
+
+# request params
+@app.get("/hello/<name>")
+def hello_world_from_query(name):
+    return {"name":name}
+
+#request body
+# Request query params
 #
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:jay@9352*Mysql@localhost/late_entries'
 # app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Suppress Flask-SQLAlchemy modification tracking
