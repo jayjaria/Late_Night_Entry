@@ -67,7 +67,7 @@ def late_entries_last_night():
 
 
 # We made 4 fields Roll number, Start Date, End Date, Late Count. There are 4 different variations of user searches
-@app.route('/find late students', methods=['GET'])
+@app.route('/find_late_students', methods=['GET'])
 def find_late_students():
     start_date = request.args.get("Start_date")
     end_date = request.args.ger("End_date")
