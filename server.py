@@ -3,7 +3,6 @@ from datetime import datetime, timedelta
 
 app = Flask(__name__)
 
-
 @app.get("/hello")
 def hello_world():
     # /hello?para1=2
