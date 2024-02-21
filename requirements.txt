@@ -1,0 +1,11 @@
+altgraph
+distlib==0.3.8
+filelock==3.13.1
+future
+macholib
+platformdirs==4.2.0
+six
+virtualenv==20.25.0
+
+flask~=3.0.2
+mysqlclient~=2.2.4
