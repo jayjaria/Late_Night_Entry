@@ -4,7 +4,7 @@
 
 ### By Jay
 
-- <input type="checkbox" disabled checked /> Learn about JWT token
+- [ ] Learn about JWT token
 - [ ] Integrate using pyjwt
 - [ ] Make login request that will validate user currently admin
 - [ ] Look into flask-login, flask-restful packages.
