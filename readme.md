@@ -16,8 +16,9 @@
 ## How to run the project
 
 1. Create virtual environment, and activate the virtual environment
-   > > python -m venv .venv
-   > > source .venv/bin/activate
+   > python -m venv .venv
+
+   > source .venv/bin/activate
 2. Run "pip install -r requirements.txt" it will install all the dependencies
 3. Run
-   > > python run.py
+   > python run.py
