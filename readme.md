@@ -4,8 +4,8 @@
 
 ### By Jay
 
-- [xx] Learn about JWT token
-- [xx] Integrate using pyjwt
+- [x] Learn about JWT token
+- [x] Integrate using pyjwt
 - [ ] Make login request that will validate user currently admin
 - [ ] Look into flask-login, flask-restful packages.
 - [ ] NIP(Not important): Try to look into Python typings
