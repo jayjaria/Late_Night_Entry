@@ -48,6 +48,5 @@ def dashboard():
 def logout():
     logout_user()
     return 'Logged out Successfully'
-
 if __name__=='__main__':
     app.run(debug=True)
