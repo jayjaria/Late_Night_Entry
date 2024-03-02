@@ -1,55 +1,35 @@
-from functools import wraps
+from server import Users, request, jsonify, app
+from server.utils import token_required
 import jwt
-from flask import request, Flask
-from flask import current_app
-import models
-
-app = Flask(__name__)
-app.config["SECRET_KEY"] = "my_secret_key"
 
 
-def token_required(func):
-    @wraps(func)
-    def decorated(*args, **kwargs):
-        token = None
-        if "Authorization" in request.headers:
-            token = request.headers["Authorization"].split(" ")[1]
+@app.route("/login", methods=["POST"])
+def login():
+    data = request.json
+    username = data.get("username")
+    password = data.get("password")
 
-        if not token:
-            return {
-                "message": "Authentication token is missing",
-                "data": None,
-                "error": "Unauthorized",
-            }, 401
+    if not username or not password:
+        return jsonify({"message": "Username and Password are required"}), 400
 
-        try:
-            data = jwt.decode(
-                token, current_app.config["SECRET KEY"], algorithms=["HS256"]
-            )
-            current_user = models.Users().get_by_id(data["user_id"])
-            if current_user is None:
-                return {
-                    "message": "Invalid Authetication token",
-                    "data": None,
-                    "error": "Unauthorized",
-                }, 401
+    user = Users.query.filter_by(username=username, password=password).first()
 
-        except Exception as e:
-            return {
-                "message": "Something went wrong",
-                "data": None,
-                "error": str(e),
-            }, 500
-
-        return func(current_user, *args, **kwargs)
-
-    return decorated
+    if user:
+        token = jwt.encode(
+            {"user_id": user.id, "role": user.role.value},
+            app.config["SECRET_KEY"],
+            algorithm="HS256",
+        )
+        return jsonify({"message": "Login successful", "token": token}), 200
+    else:
+        return (
+            jsonify({"message", "Invalid email or password"}),
+            400,
+        )  # or create a new user/account
 
 
-# def validate_email_password(email, password):
-#     if not email or not re.match(r"[^@]+@[^@]+\.[^@]+", email):
-#         return "Invalid format"
-#     if not password or len(password) < 8:
-#         return "Password must be atleast of 8 characters"
-
-#     return True
+@app.route("/", methods=["GET"])
+@token_required
+def dashboard(user):
+    print(user)
+    return jsonify({"hello": " "})

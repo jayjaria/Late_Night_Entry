@@ -9,9 +9,13 @@ class Roles(Enum):
 
 
 class Users(BaseModel):
+
     username: Mapped[str] = mapped_column(
         String(50),
         unique=True,
     )
     password: Mapped[str] = mapped_column(TEXT)
     role = Column(SQLEnum(Roles), default=Roles.USER)
+
+    def __repr__(self):
+        return f"username: {self.username}, password: {self.password}, id: {self.id}, role:{self.role}"
