@@ -1,52 +1,30 @@
-from flask import Flask, url_for, request
-from flask_login import LoginManager, UserMixin, login_user, redirect, login_required, current_user, logout_user
+from flask import Flask, request
+from server import jsonify
+from Users import Users
+
 
 app = Flask(__name__)
-app.config['SECRET_KEY']='my_secret_key'
-login_manager = LoginManager(app)
+app.config["SECRET_KEY"] = "my_secret_key"
 
-class User(UserMixin):
-    def __init__(self, user_id, username, password, is_admin=False):
-        self.id = user_id
-        self.username = username
-        self.password = password
-        self.is_admin = is_admin
 
-users = {
-    'user1': User('1','u1','a'),
-    'user2': User('2','u2','b'),
-    'admin': User('3','Admin','Admin', is_admin=True)
-}
-
-@login_manager.user_loader
-def load_user(user_id):
-    return users.get(user_id)  #Returns the user object
-
-@app.route('/login', methods = ['POST'])
+@app.route("/login", methods=["POST"])
 def login():
-    username = request.form['username']
-    password = request.form['password']
+    data = request.json
+    username = data.get("usernamae")
+    password = data.get("password")
 
-    user = users.get(username)
-    pswd = user.password
+    if not username or password:
+        return jsonify({"message": "Username and Password are required"}), 400
 
-    if user and pswd==password:
-        login_user(user)
-        return redirect(url_for('dashboard'))
-    
-
-@app.route('/dashboard')
-@login_required
-def dashboard():
-    if current_user.is_admin:
-        return 'You are on the Admin Dashboard'
+    user = Users.query.filter_by(username=username, password=password).first()
+    if user:
+        return jsonify({"message": "Login successful"}), 200
     else:
-        return 'You are on the User Dashboard'
-    
-@app.route('/logout')
-@login_required
-def logout():
-    logout_user()
-    return 'Logged out Successfully'
-if __name__=='__main__':
+        return (
+            jsonify({"message", "Invalid email or password"}),
+            400,
+        )  # or create a new user/account
+
+
+if __name__ == "__main__":
     app.run(debug=True)
