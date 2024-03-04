@@ -10,8 +10,8 @@
 - [x] Look into flask-login, flask-restful packages.
 - [ ] NIP(Not important): Try to look into Python typings
 - [ ] Import and modules
-- [ ] Usage of **init**.py file
-- [ ] Usage of **repl** function, how to use it
+- [x] Usage of **init**.py file
+- [x] Usage of **repl** function, how to use it
 
 ## How to run the project
 
