@@ -1,7 +1,7 @@
 from functools import wraps
 import jwt
-import json
-from server import Users, current_app, request
+from server.models import Users
+from flask import current_app, request
 
 
 def token_required(func):
@@ -25,7 +25,7 @@ def token_required(func):
                 token, current_app.config["SECRET_KEY"], algorithms=["HS256"]
             )
 
-            current_user = Users.query.filter_by(id=data["user_id"]).first()
+            current_user = Users.query.filter_by(id=data["id"]).first()
             if current_user is None:
                 return {
                     "message": "Invalid Authetication token",
@@ -41,6 +41,6 @@ def token_required(func):
                 "error": str(e),
             }, 500
 
-        return func(json.dumps(current_user), *args, **kwargs)
+        return func(current_user, *args, **kwargs)
 
     return decorated
