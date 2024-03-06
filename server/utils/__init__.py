@@ -1,7 +1,9 @@
 from functools import wraps
 import jwt
+from jwt import ExpiredSignatureError
 from server.models import Users
 from flask import current_app, request
+from server import jsonify
 
 
 def token_required(func):
@@ -36,13 +38,17 @@ def token_required(func):
                     "error": "Unauthorized",
                 }, 401
 
-        except Exception as e:
-            print(e)
-            return {
-                "message": "Something went wrong",
-                "data": None,
-                "error": str(e),
-            }, 500
+        except ExpiredSignatureError:
+            return (
+                jsonify(
+                    {
+                        "message": "Token has Expired",
+                        "data": None,
+                        "error": "Token Expired",
+                    }
+                ),
+                401,
+            )
 
         return func(
             current_user.to_dict(rules=("-password",)), *args, **kwargs
