@@ -1,6 +1,7 @@
 from server import Users, request, jsonify, app
 from server.utils import token_required
 import jwt
+from flask_jwt_extended import get_jwt
 
 
 @app.route("/login", methods=["POST"])
@@ -28,8 +29,12 @@ def login():
         )  # or create a new user/account
 
 
-@app.route("/", methods=["GET"])
-@token_required
-def dashboard(user):
-    print(user)
-    return jsonify({"hello": " "})
+@app.route("/logout", methods=["DELETE"])
+@token_required(verify_type=False)
+def logout():
+    token = get_jwt()
+
+    jti = token["jti"]
+    ttype = token["type"]
+    jwt.redis_blocklist.set(jti, "", ex=3600)  # expiration time in seconds
+    return jsonify(msg=f"{ttype.capitalize()} token successfully revoked")
