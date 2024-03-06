@@ -22,7 +22,10 @@ def token_required(func):
 
         try:
             data = jwt.decode(
-                token, current_app.config["SECRET_KEY"], algorithms=["HS256"]
+                token,
+                current_app.config["SECRET_KEY"],
+                algorithms=["HS256"],
+                options={"verify_exp": True},
             )
 
             current_user = Users.query.filter_by(id=data["id"]).first()
@@ -41,6 +44,8 @@ def token_required(func):
                 "error": str(e),
             }, 500
 
-        return func(current_user, *args, **kwargs)
+        return func(
+            current_user.to_dict(rules=("-password",)), *args, **kwargs
+        )
 
     return decorated

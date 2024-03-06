@@ -3,7 +3,7 @@ from flask import request, jsonify
 from server.utils import token_required
 import jwt
 from server import app, flask_bcrypt
-from flask_jwt_extended import get_jwt
+from datetime import datetime, timedelta, timezone
 
 
 @app.route("/login", methods=["POST"])
@@ -19,9 +19,11 @@ def login():
     if user and not flask_bcrypt.check_password_hash(user.password, password):
         return jsonify({"message": "Invalid password"}), 400
 
+    payload = user.to_dict(rules=("-password", "-created_on", "-updated_on"))
+    payload["exp"] = datetime.now(tz=timezone.utc) + timedelta(minutes=30)
     if user:
         token = jwt.encode(
-            user.to_dict(rules=("-password", "-created_on", "-updated_on")),
+            payload,
             app.config["SECRET_KEY"],
             algorithm="HS256",
         )
@@ -36,15 +38,24 @@ def login():
 @app.route("/", methods=["GET"])
 @token_required
 def dashboard(user):
-    return jsonify(user.to_dict(rules=("-password",)))
+    return jsonify(user)
 
 
 @app.route("/logout", methods=["DELETE"])
-@token_required(verify_type=False)
+@token_required
 def logout():
-    token = get_jwt()
+    # jti = token["jti"]
+    # ttype = token["type"]
+    # jwt.redis_blocklist.set(jti, "", ex=3600)  # expiration time in seconds
+    # return jsonify(msg=f"{ttype.capitalize()} token successfully revoked")
+    return jsonify({"message": "Logout"})
 
-    jti = token["jti"]
-    ttype = token["type"]
-    jwt.redis_blocklist.set(jti, "", ex=3600)  # expiration time in seconds
-    return jsonify(msg=f"{ttype.capitalize()} token successfully revoked")
+
+@app.route("/register", methods=["POST"])
+@token_required
+def register_user(user):
+    # user shoukld be admin
+    # request body=>{usernmae->string,password->string,is_admin->True/False}
+
+    register_user = {}  # store in user table
+    return register_user

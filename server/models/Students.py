@@ -1,5 +1,5 @@
 from .Base import BaseModel
-from server import mapped_column, Mapped, String, Column, SQLEnum, TEXT
+from server import mapped_column, Mapped, String
 
 
 class Students(BaseModel):
