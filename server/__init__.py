@@ -3,9 +3,10 @@ from flask import Flask, abort, session, request, redirect, current_app
 from flask.json import jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
-from sqlalchemy import Column, String, Enum as SQLEnum, TEXT
+from sqlalchemy import Column, String, Enum as SQLEnum, TEXT, Boolean
 from dotenv import load_dotenv
 from urllib.parse import quote_plus
+from flask_bcrypt import Bcrypt
 
 load_dotenv()
 
@@ -26,11 +27,31 @@ app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = db_uri
 app.config["SECRET_KEY"] = os.getenv("JWT_TOKEN", "default_secret")
 
-
+flask_bcrypt = Bcrypt(app)
 db.init_app(app)
 
-from server.models import *
+from server.models import (
+    Users as UserModel,
+    Students as StudentModel,
+)
 from server.routes import *
+
+
+def create_root_user():
+    print("________initiating server root user____________")
+    root_user = os.getenv("ROOT_USER")
+    root_password = os.getenv("ROOT_PASSWORD")
+    if root_password and root_user:
+        root_user = UserModel(root_user, root_password, True)
+        db.session.add(root_user)
+        db.session.commit()
+    else:
+        print("There is no default user set")
+
 
 with app.app_context():
     db.create_all()
+
+    count = UserModel.query.count()
+    if count == 0:
+        create_root_user()
