@@ -1,5 +1,5 @@
 from .Base import BaseModel
-from server import mapped_column, Mapped, String
+from server import mapped_column, Mapped, String, db
 
 
 class Students(BaseModel):
@@ -7,3 +7,4 @@ class Students(BaseModel):
     name: Mapped[str] = mapped_column(
         String(50),
     )
+    students = db.relationship("EntryLogs")
