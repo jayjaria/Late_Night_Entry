@@ -47,7 +47,6 @@ def dashboard(user):
 @app.route("/logout", methods=["DELETE"])
 @token_required
 def logout():
-
     return jsonify({"message": "Logout"})
 
 

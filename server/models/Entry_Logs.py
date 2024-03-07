@@ -1,13 +1,16 @@
 from .Base import BaseModel
 from server import mapped_column, db
-from server.models import Students, Users
 
 
 class EntryLogs(BaseModel):
-    student_id = db.column(
-        db.String(255),
-        db.ForeignKey("Students.id", nullable=False, unique=True),
+    student_id = db.Column(
+        db.String(255), db.ForeignKey("students.id"), nullable=False
     )
 
-    # roll_no: Mapped[str] = mapped_column(String(10), unique=True)
-    # created_by: Mapped[str] = mapped_column(String(30), unique=True)
+    created_by = db.Column(
+        db.String(255), db.ForeignKey("users.id"), nullable=False
+    )
+
+    def __init__(self, student, user) -> None:
+        self.student_id = student
+        self.created_by = user

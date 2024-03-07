@@ -33,6 +33,7 @@ db.init_app(app)
 from server.models import (
     Users as UserModel,
     Students as StudentModel,
+    Entry_Logs as EntryLogModel,
 )
 from server.routes import *
 

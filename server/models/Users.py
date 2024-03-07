@@ -7,6 +7,7 @@ from server import (
     SQLEnum,
     TEXT,
     Boolean,
+    db,
 )
 from enum import Enum
 from datetime import datetime
@@ -26,6 +27,7 @@ class Users(BaseModel):
     )
     password: Mapped[str] = mapped_column(TEXT, nullable=False)
     is_admin = mapped_column(Boolean, default=False)
+    entry_log = db.relationship("EntryLogs", backref="user")
 
     def __init__(self, username, password, is_admin=False):
         self.username = username
