@@ -66,12 +66,8 @@ def validate_pass(password):
 @app.route("/register", methods=["POST"])
 @token_required
 def register_user(user):
-    register_user = {}
-
     # user should be admin
     if user.get("is_admin"):
-
-        # request body=>{usernmae->string,password->string,is_admin->True/False}
 
         data = request.json
         username = data.get("username")
@@ -83,16 +79,11 @@ def register_user(user):
                 print(Users.query.filter_by(username=username))
                 return jsonify({"message": "This user already exists"}), 400
 
-            register_user[username] = password
-            # Adding it to Users table
-            me = Users(username, password, is_admin)
-            db.session.add(me)
+            register_user = Users(username, password, is_admin)
+            db.session.add(register_user)
             db.session.commit()
 
-            return register_user
-            # store in user table
-
-            # return register_user
+            return register_user.to_dict()
         else:
             return jsonify({"message": "Enter a Strong Password"})
 
