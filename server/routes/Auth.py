@@ -83,7 +83,7 @@ def register_user(user):
             db.session.add(register_user)
             db.session.commit()
 
-            return register_user.to_dict()
+            return register_user.to_dict(rules=("-password",))
         else:
             return jsonify({"message": "Enter a Strong Password"})
 

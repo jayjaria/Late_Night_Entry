@@ -20,11 +20,10 @@ def createEntryLog(user):
         if not student:
             return jsonify({"message": "Invalid roll number"}), 404
 
-        print(student.id, student.name)
         entry_log = EntryLogs(student=student.id, user=user.get("id"))
-
         db.session.add(entry_log)
         db.session.commit()
+
         return jsonify(
             {"message": "Success", "log": entry_log.to_dict(only=("id",))}
         )

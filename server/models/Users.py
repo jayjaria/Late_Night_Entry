@@ -20,7 +20,7 @@ class Roles(Enum):
 
 
 class Users(BaseModel):
-
+    serialize_rules = ("-entry_log",)
     username: Mapped[str] = mapped_column(
         String(50),
         unique=True,
