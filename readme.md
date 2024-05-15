@@ -4,14 +4,14 @@
 
 ### By Jay
 
-- [ ] Learn about JWT token
-- [ ] Integrate using pyjwt
-- [ ] Make login request that will validate user currently admin
-- [ ] Look into flask-login, flask-restful packages.
+- [x] Learn about JWT token
+- [x] Integrate using pyjwt
+- [x] Make login request that will validate user currently admin
+- [x] Look into flask-login, flask-restful packages.
 - [ ] NIP(Not important): Try to look into Python typings
 - [ ] Import and modules
-- [ ] Usage of **init**.py file
-- [ ] Usage of **repl** function, how to use it
+- [x] Usage of **init**.py file
+- [x] Usage of **repl** function, how to use it
 
 ## How to run the project
 
