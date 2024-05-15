@@ -5,7 +5,6 @@ export default function AddUser() {
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("");
 
-  function showModal() {}
   return (
     <div>
       <form>
