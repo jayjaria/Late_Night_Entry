@@ -1,0 +1,17 @@
+.card-container {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+.card-header {
+  background-color: var(--bs-card-bg);
+  display: flex;
+  justify-content: center;
+}
+
+.card {
+  min-width: 300px;
+}

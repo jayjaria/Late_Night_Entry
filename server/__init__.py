@@ -7,6 +7,8 @@ from sqlalchemy import Column, String, Enum as SQLEnum, TEXT, Boolean
 from dotenv import load_dotenv
 from urllib.parse import quote_plus
 from flask_bcrypt import Bcrypt
+from flask_cors import CORS
+import logging
 
 load_dotenv()
 
@@ -30,12 +32,17 @@ app.config["SECRET_KEY"] = os.getenv("JWT_TOKEN", "default_secret")
 flask_bcrypt = Bcrypt(app)
 db.init_app(app)
 
+logging.basicConfig()
+logging.getLogger("sqlalchemy.engine").setLevel(logging.INFO)
+
 from server.models import (
     Users as UserModel,
     Students as StudentModel,
     Entry_Logs as EntryLogModel,
 )
 from server.routes import *
+
+CORS(app)
 
 
 def create_root_user():

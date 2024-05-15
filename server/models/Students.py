@@ -7,4 +7,4 @@ class Students(BaseModel):
     name: Mapped[str] = mapped_column(
         String(50),
     )
-    entry_log = db.relationship("EntryLogs", backref="student")
+    entry_log = db.relationship("EntryLogs", backref="student", lazy="dynamic")

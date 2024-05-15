@@ -49,7 +49,7 @@ def token_required(func):
                 ),
                 401,
             )
-        print(current_user.entry_log)
+
         return func(
             current_user.to_dict(rules=("-password",)), *args, **kwargs
         )

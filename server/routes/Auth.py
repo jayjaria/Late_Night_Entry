@@ -5,36 +5,60 @@ import jwt
 from server import app, flask_bcrypt, db
 from datetime import datetime, timedelta, timezone
 import os
+from sqlalchemy.exc import NoResultFound
+from jwt.exceptions import ExpiredSignatureError
 
 
 @app.route("/login", methods=["POST"])
 def login():
-    data = request.json
-    username = data.get("username")
-    password = data.get("password")
+    try:
+        data = request.json
+        username = data.get("username")
+        password = data.get("password")
 
-    if not username or not password:
-        return jsonify({"message": "Username and Password are required"}), 400
+        if not username or not password:
+            return (
+                jsonify({"message": "Username and Password are required"}),
+                400,
+            )
 
-    user = Users.query.filter_by(username=username).one()
-    if user and not flask_bcrypt.check_password_hash(user.password, password):
-        return jsonify({"message": "Invalid password"}), 400
+        user = Users.query.filter_by(username=username).one()
+        if user and not flask_bcrypt.check_password_hash(
+            user.password, password
+        ):
+            return jsonify({"message": "Invalid password"}), 404
 
-    payload = user.to_dict(rules=("-password", "-created_on", "-updated_on"))
-    payload["exp"] = datetime.now(tz=timezone.utc) + timedelta(
-        minutes=int(os.getenv("JWT_EXPIRY", 30))
-    )
-    if user:
-        token = jwt.encode(
-            payload,
-            app.config["SECRET_KEY"],
-            algorithm="HS256",
+        payload = user.to_dict(
+            rules=("-password", "-created_on", "-updated_on")
         )
-        return jsonify({"message": "Login successful", "token": token}), 200
-    else:
+        payload["exp"] = datetime.now(tz=timezone.utc) + timedelta(
+            minutes=int(os.getenv("JWT_EXPIRY", 30))
+        )
+        print("here")
+        print(os.getenv("JWT_EXPIRY", 30))
+        if user:
+            token = jwt.encode(
+                payload,
+                app.config["SECRET_KEY"],
+                algorithm="HS256",
+            )
+            # print(token)
+            return (
+                jsonify({"message": "Login successful", "token": token}),
+                200,
+            )
+
+    except NoResultFound:
         return (
-            jsonify({"message": "Invalid email or password"}),
-            400,
+            jsonify({"message": "No such user exists"}),
+            404,
+        )
+    except ExpiredSignatureError:
+        return (jsonify({"message": "Token has expired"}), 401)
+    except Exception:
+        return (
+            jsonify({"message": "Internal Server Error"}),
+            500,
         )
 
 
